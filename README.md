@@ -30,7 +30,7 @@ ChatSnapshot brings **persistence and state consistency** to this emerging ecosy
 
 ## 🧱 Where It Fits in the Stack
 
-![ChatSnapshot Architecture](assets/ChatSnapshot.png)
+![ChatSnapshot Architecture](assets/ChatSnapshot.PNG)
 
 ---
 
