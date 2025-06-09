@@ -30,41 +30,8 @@ ChatSnapshot brings **persistence and state consistency** to this emerging ecosy
 
 ## 🧱 Where It Fits in the Stack
 
-```mermaid
-graph TD
-  subgraph Client_Layer [Client Layer]
-    User[User / UI]
-  end
+![ChatSnapshot Architecture](assets/ChatSnapshot.png)
 
-  subgraph App_Layer [App Layer]
-    AGUI["Agentic UI
-    (e.g. internet-agent-ui)"]
-  end
-
-  subgraph Agent_Layer [Agent Layer]
-    MCP[Multi-Agent Control Plane MCP]
-    A2A[Agent-to-Agent Protocols A2A]
-    Frameworks["Agent Frameworks
-    (AG2, LangChain, etc.)"]
-    Orchestrators["Orchestrators
-    (Routing / Patterns)"]
-  end
-
-  subgraph Infra_Layer [Infrastructure Layer]
-    ChatSnapshot["📦 ChatSnapshot
-    (Persistence + Serialization)"]
-    Storage["Storage Backend
-    (MongoDB / JSON / SQLite)"]
-  end
-
-  User --> AGUI
-  AGUI --> MCP
-  MCP --> A2A
-  A2A --> Frameworks
-  Frameworks --> Orchestrators
-  Orchestrators --> ChatSnapshot
-  ChatSnapshot --> Storage
-````
 ---
 
 ## 🧬 Core Value
