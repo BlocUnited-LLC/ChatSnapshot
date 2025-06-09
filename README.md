@@ -32,31 +32,34 @@ ChatSnapshot brings **persistence and state consistency** to this emerging ecosy
 
 ```mermaid
 graph TD
-  subgraph Client Layer
+  subgraph Client_Layer [Client Layer]
     User[User / UI]
   end
 
-  subgraph App Layer
-    AGUI[Agentic UI (e.g. internet-agents-ui)]
+  subgraph App_Layer [App Layer]
+    AGUI[Agentic UI<br/>(e.g. internet-agent-ui)]
   end
 
-  subgraph Agent Layer
+  subgraph Agent_Layer [Agent Layer]
     MCP[Multi-Agent Control Plane (MCP)]
     A2A[Agent-to-Agent Protocols (A2A)]
-    Frameworks[Frameworks (AG2, LangChain, etc.)]
-    Orchestrators[Custom Logic / Routing / Patterns]
+    Frameworks[Agent Frameworks<br/>(AG2, LangChain, etc.)]
+    Orchestrators[Orchestrators<br/>(Routing / Patterns)]
   end
 
-  subgraph Infra Layer
-    ChatSnapshot[📦 ChatSnapshot (Persistence + Serialization)]
-    Storage[Storage Backend (MongoDB / JSON / SQLite)]
+  subgraph Infra_Layer [Infrastructure Layer]
+    ChatSnapshot["📦 ChatSnapshot<br/>(Persistence + Serialization)"]
+    Storage[Storage Backend<br/>(MongoDB / JSON / SQLite)]
   end
 
-  User --> AGUI --> MCP --> A2A
-  A2A --> Frameworks --> Orchestrators --> ChatSnapshot --> Storage
-  ChatSnapshot -->|Restore| Frameworks
+  User --> AGUI
+  AGUI --> MCP
+  MCP --> A2A
+  A2A --> Frameworks
+  Frameworks --> Orchestrators
+  Orchestrators --> ChatSnapshot
+  ChatSnapshot --> Storage
 ```
-
 ---
 
 ## 🧬 Core Value
