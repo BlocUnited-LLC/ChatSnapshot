@@ -37,19 +37,24 @@ graph TD
   end
 
   subgraph App_Layer [App Layer]
-    AGUI[Agentic UI<br/>(e.g. internet-agent-ui)]
+    AGUI["Agentic UI
+    (e.g. internet-agent-ui)"]
   end
 
   subgraph Agent_Layer [Agent Layer]
-    MCP[Multi-Agent Control Plane (MCP)]
-    A2A[Agent-to-Agent Protocols (A2A)]
-    Frameworks[Agent Frameworks<br/>(AG2, LangChain, etc.)]
-    Orchestrators[Orchestrators<br/>(Routing / Patterns)]
+    MCP[Multi-Agent Control Plane MCP]
+    A2A[Agent-to-Agent Protocols A2A]
+    Frameworks["Agent Frameworks
+    (AG2, LangChain, etc.)"]
+    Orchestrators["Orchestrators
+    (Routing / Patterns)"]
   end
 
   subgraph Infra_Layer [Infrastructure Layer]
-    ChatSnapshot["📦 ChatSnapshot<br/>(Persistence + Serialization)"]
-    Storage[Storage Backend<br/>(MongoDB / JSON / SQLite)]
+    ChatSnapshot["📦 ChatSnapshot
+    (Persistence + Serialization)"]
+    Storage["Storage Backend
+    (MongoDB / JSON / SQLite)"]
   end
 
   User --> AGUI
@@ -59,7 +64,7 @@ graph TD
   Frameworks --> Orchestrators
   Orchestrators --> ChatSnapshot
   ChatSnapshot --> Storage
-```
+````
 ---
 
 ## 🧬 Core Value
