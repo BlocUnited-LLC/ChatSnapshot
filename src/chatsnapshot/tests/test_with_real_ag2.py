@@ -3,18 +3,32 @@
 
 import os
 from datetime import datetime
+import sys
+from pathlib import Path as _Path
+from dotenv import load_dotenv
+
+# Ensure project root is on the path for local imports
+sys.path.append(str(_Path(__file__).resolve().parents[2]))
+load_dotenv()
+
 from autogen import ConversableAgent, GroupChat, GroupChatManager
 from ag2_persistence import AG2ChatPersistence, StorageBackend, PersistentChatMixin
 
 # Configuration
 llm_config = {
     "model": "gpt-4",
-    "api_key": os.environ.get("OPENAI_API_KEY"),  # Set your API key
+    "api_key": os.environ.get("OPENAI_API_KEY"),
     "temperature": 0.7,
 }
 
+if not llm_config["api_key"]:
+    llm_config = False
+
 def test_direct_chat_persistence():
     """Test persistence with a direct agent-to-agent chat"""
+    if llm_config is False:
+        import pytest
+        pytest.skip("OPENAI_API_KEY not set")
     print("=== Testing Direct Chat Persistence ===\n")
     
     # Initialize persistence
@@ -81,6 +95,9 @@ def test_direct_chat_persistence():
 
 def test_groupchat_persistence():
     """Test persistence with a group chat"""
+    if llm_config is False:
+        import pytest
+        pytest.skip("OPENAI_API_KEY not set")
     print("\n=== Testing GroupChat Persistence ===\n")
     
     # Initialize persistence with SQLite
@@ -207,6 +224,9 @@ def test_groupchat_persistence():
 
 def test_persistent_mixin():
     """Test using the PersistentChatMixin"""
+    if llm_config is False:
+        import pytest
+        pytest.skip("OPENAI_API_KEY not set")
     print("\n=== Testing PersistentChatMixin ===\n")
     
     # Create a custom persistent agent class

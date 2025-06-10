@@ -106,8 +106,17 @@ pip install -e .
 ### Dependencies
 
 - Python 3.8+  
-- AG2 (AutoGen) >= 0.2.0  
+- AG2 (AutoGen) >= 0.2.0
 - Standard library modules: `json`, `sqlite3`, `datetime`, `pathlib`, `mongo`, `pymongo`
+
+### Environment
+
+Create a `.env` file in the project root (or copy `\.env.example`) and set:
+
+```
+OPENAI_API_KEY=<your OpenAI API key>
+MONGODB_URI=mongodb://localhost:27017
+```
 
 ---
 

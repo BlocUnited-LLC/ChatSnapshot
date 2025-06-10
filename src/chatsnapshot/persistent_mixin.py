@@ -8,7 +8,8 @@ class PersistentChatMixin:
     """Mixin class to add persistence capabilities to AG2 agents"""
 
     def __init__(self, *args, persistence_manager: Optional[AG2ChatPersistence] = None, **kwargs):
-        super().__init__(*args, **kwargs)
+        # Do not call super().__init__ here to avoid interfering with
+        # multiple inheritance initialization order.
         self._persistence_manager = persistence_manager or AG2ChatPersistence()
         self._chat_id = None
 

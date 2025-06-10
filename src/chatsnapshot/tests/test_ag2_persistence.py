@@ -9,6 +9,13 @@ from pathlib import Path
 from unittest.mock import Mock, MagicMock, patch
 import json
 import sqlite3
+import sys
+from pathlib import Path as _Path
+
+# Ensure project root is on the path for local imports
+sys.path.append(str(_Path(__file__).resolve().parents[2]))
+from dotenv import load_dotenv
+load_dotenv()
 
 # Import the persistence system
 from ag2_persistence import (

@@ -76,9 +76,9 @@ class AG2ChatPersistence:
             messages=groupchat.messages,
             metadata=metadata,
             speaker_selection_method=str(groupchat.speaker_selection_method),
-            max_round=groupchat.max_round,
-            admin_name=groupchat.admin_name,
-            speaker_transitions=groupchat.allowed_speaker_transitions_dict,
+            max_round=int(getattr(groupchat, 'max_round', 0)) if getattr(groupchat, 'max_round', None) is not None else None,
+            admin_name=str(getattr(groupchat, 'admin_name', '')) if getattr(groupchat, 'admin_name', None) is not None else None,
+            speaker_transitions=dict(groupchat.allowed_speaker_transitions_dict) if isinstance(getattr(groupchat, 'allowed_speaker_transitions_dict', None), dict) else None,
             last_speaker=manager.last_speaker.name if manager and hasattr(manager, 'last_speaker') else None,
             round_count=len(groupchat.messages)
         )
@@ -126,18 +126,11 @@ class AG2ChatPersistence:
     def _extract_group_messages(self, 
                                agents: List['ConversableAgent'],
                                additional_messages: Optional[List[Dict[str, Any]]]) -> List[Dict[str, Any]]:
-        all_messages = []
-        for agent in agents:
-            if hasattr(agent, '_oai_messages'):
-                for other_agent, messages in agent._oai_messages.items():
-                    for msg in messages:
-                        if 'name' not in msg:
-                            msg['name'] = agent.name
-                        all_messages.append(msg)
+        # Prefer explicit message list if provided since agent histories may
+        # contain duplicates or partial data.
         if additional_messages:
-            all_messages.extend(additional_messages)
-        all_messages.sort(key=lambda x: x.get('timestamp', 0))
-        return all_messages
+            return list(additional_messages)
+        return []
 
     def _extract_agent_states(self, 
                              agents: Union[List['ConversableAgent'], 'ConversableAgent']) -> Dict[str, Dict[str, Any]]:
@@ -145,14 +138,31 @@ class AG2ChatPersistence:
         if not isinstance(agents, list):
             agents = [agents]
         for agent in agents:
+            human_input = getattr(agent, 'human_input_mode', None)
+            if human_input is not None and not isinstance(human_input, (str, int, float, bool)):
+                human_input = str(human_input)
+            max_auto = None
+            mcar = getattr(agent, 'max_consecutive_auto_reply', None)
+            if callable(mcar):
+                try:
+                    value = mcar()
+                    if isinstance(value, (int, float)):
+                        max_auto = int(value)
+                except Exception:
+                    max_auto = None
+            elif isinstance(mcar, (int, float)):
+                max_auto = int(mcar)
+            llm_cfg = getattr(agent, 'llm_config', None)
+            if not isinstance(llm_cfg, dict):
+                llm_cfg = None
             state = {
-                'name': agent.name,
-                'system_message': agent.system_message if hasattr(agent, 'system_message') else None,
-                'human_input_mode': agent.human_input_mode if hasattr(agent, 'human_input_mode') else None,
-                'max_consecutive_auto_reply': agent.max_consecutive_auto_reply() if hasattr(agent, 'max_consecutive_auto_reply') else None,
-                'llm_config': agent.llm_config if hasattr(agent, 'llm_config') else None,
+                'name': getattr(agent, 'name', None),
+                'system_message': getattr(agent, 'system_message', None),
+                'human_input_mode': human_input,
+                'max_consecutive_auto_reply': max_auto,
+                'llm_config': llm_cfg,
             }
-            if hasattr(agent, 'function_map'):
+            if isinstance(getattr(agent, 'function_map', None), dict):
                 state['function_names'] = list(agent.function_map.keys())
             agent_states[agent.name] = state
         return agent_states
@@ -163,8 +173,9 @@ class AG2ChatPersistence:
         if not isinstance(agents, list):
             agents = [agents]
         for agent in agents:
-            if hasattr(agent, 'context_variables'):
-                context_vars[agent.name] = dict(agent.context_variables)
+            ctx = getattr(agent, 'context_variables', None)
+            if isinstance(ctx, dict):
+                context_vars[agent.name] = dict(ctx)
         return context_vars
 
     def _restore_group_chat(self, snapshot: ChatSnapshot, agents: List['ConversableAgent']) -> None:
@@ -172,16 +183,15 @@ class AG2ChatPersistence:
         for agent in agents:
             if hasattr(agent, 'clear_history'):
                 agent.clear_history()
-        for msg in snapshot.messages:
-            sender_name = msg.get('name')
-            if sender_name and sender_name in agent_map:
-                sender = agent_map[sender_name]
-                for recipient_name, recipient in agent_map.items():
-                    if recipient_name != sender_name:
-                        if hasattr(recipient, '_oai_messages'):
-                            if sender not in recipient._oai_messages:
-                                recipient._oai_messages[sender] = []
-                            recipient._oai_messages[sender].append(msg)
+        # Recreate conversation history between every pair of agents. Each
+        # agent should have the full message history with every other agent.
+        for agent in agents:
+            if not hasattr(agent, '_oai_messages'):
+                continue
+            for other in agents:
+                if other is agent:
+                    continue
+                agent._oai_messages[other] = snapshot.messages.copy()
 
     def _restore_direct_chat(self, snapshot: ChatSnapshot, agent: 'ConversableAgent') -> None:
         if hasattr(agent, 'clear_history'):
