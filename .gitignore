@@ -4,3 +4,21 @@ __pycache__/
 *.sqlite
 *.db
 .env
+
+# Env files (never commit)
+.env
+.env.example
+.env.*
+
+
+# Env files (never commit)
+.env
+.env.example
+.env.*
+
+
+# Env files (never commit)
+.env
+.env.example
+.env.*
+
