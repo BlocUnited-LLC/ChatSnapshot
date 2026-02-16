@@ -2,6 +2,11 @@
 
 **A durable execution ledger for agentic and distributed systems.**
 
+## Status
+
+This repository contains v1 code. A clean-slate v2 ObserverOS redesign is specified in `OBSERVEROS_V2_PLAN.md`.
+v2 is not backward compatible with v1 and treats this codebase as raw material.
+
 As agentic systems evolve into distributed, multi-agent applications, there is no canonical layer that defines what actually happened across workflows, services, and runtimes. Existing infrastructure — A2A for messaging, OpenTelemetry for tracing, and agent runtimes like AG2 for cognitive execution — provides communication and observability, but not authoritative, replayable system state. In distributed environments where multiple groupchats, agents, tools, and external services operate asynchronously, signals are emitted across boundaries without a unified mechanism to correlate, commit, and persist application-level state transitions. The result is fragmented execution history, ambiguous causality, and no durable definition of system truth.
 
 ChatSnapshot fills that gap by providing a durable execution history that higher-level systems can build upon.

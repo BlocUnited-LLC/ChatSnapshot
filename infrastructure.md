@@ -128,11 +128,16 @@ It only records what they emit.
 
 ```mermaid
 flowchart TB
-  F[Frontend Layer<br/>(AG-UI / Web / App)]
-  A[Application Layer<br/>(Workflow Manager / Scheduler)]
-  R[Agent Runtime Layer<br/>(AG2 / LangGraph / CrewAI)]
-  CS[ChatSnapshot<br/>(Truth / Event Ledger)]
-  P[Event Projections<br/>(Replay / Audit / Analytics)]
+  F["Frontend Layer
+  (AG-UI / Web / App)"]
+  A["Application Layer
+  (Workflow Manager / Scheduler)"]
+  R["Agent Runtime Layer
+  (AG2 / LangGraph / CrewAI)"]
+  CS["ChatSnapshot
+  (Truth / Event Ledger)"]
+  P["Event Projections
+  (Replay / Audit / Analytics)"]
 
   F --> A
   A --> R
